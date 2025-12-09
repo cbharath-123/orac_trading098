@@ -1,15 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import TradingChart from '@/components/TradingChart';
 import BiasMatrix from '@/components/BiasMatrix';
 import SymbolSelector from '@/components/SymbolSelector';
 import { ApiService } from '@/lib/api';
 import { AggregatedBias, TimeSeriesData } from '@/types';
-import { Activity, RefreshCw, BarChart3 } from 'lucide-react';
-
-const TradingViewChart = dynamic(() => import('@/components/TradingViewChart'), { ssr: false });
+import { Activity, RefreshCw } from 'lucide-react';
 
 export default function Home() {
   const [symbol, setSymbol] = useState('IBM');
@@ -17,7 +14,6 @@ export default function Home() {
   const [chartData, setChartData] = useState<TimeSeriesData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [useTradingView, setUseTradingView] = useState(true);
 
   useEffect(() => {
     if (symbol) {
@@ -88,42 +84,9 @@ export default function Home() {
         {/* Main Content */}
         <div className="grid grid-cols-1 gap-6">
           {/* Chart Section */}
-          <div className="bg-gray-900 rounded-lg p-4">
-            {/* Chart Toggle */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-white">{symbol}</h2>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setUseTradingView(false)}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
-                    !useTradingView 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  Custom Chart
-                </button>
-                <button
-                  onClick={() => setUseTradingView(true)}
-                  className={`px-3 py-1 rounded text-sm transition-colors flex items-center space-x-1 ${
-                    useTradingView 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  <span>TradingView</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Chart Display */}
-            {useTradingView ? (
-              <div style={{ height: '500px' }}>
-                <TradingViewChart symbol={symbol} />
-              </div>
-            ) : loading && !chartData.length ? (
-              <div className="h-[500px] flex items-center justify-center">
+          <div>
+            {loading && !chartData.length ? (
+              <div className="bg-gray-900 rounded-lg p-6 h-[500px] flex items-center justify-center">
                 <div className="text-center">
                   <RefreshCw className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
                   <p className="text-gray-400">Loading chart data...</p>
@@ -132,7 +95,7 @@ export default function Home() {
             ) : chartData.length > 0 ? (
               <TradingChart data={chartData} symbol={symbol} />
             ) : (
-              <div className="h-[500px] flex items-center justify-center">
+              <div className="bg-gray-900 rounded-lg p-6 h-[500px] flex items-center justify-center">
                 <p className="text-gray-400">No chart data available</p>
               </div>
             )}
@@ -146,10 +109,11 @@ export default function Home() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Multi-timeframe analysis using EMA, RSI, MACD, Supertrend, and ADX</p>
+          <p>Data provided by Alpha Vantage | Multi-timeframe analysis using EMA, RSI, MACD, Supertrend, and ADX</p>
           <p className="mt-2">
             <span className="text-xs">
-              TradingView Integration Available | Switch between custom charts and TradingView advanced charting
+              Note: For demonstration purposes. This dashboard uses the demo API key with limited requests.
+              Replace with your own Alpha Vantage API key for production use.
             </span>
           </p>
         </div>
